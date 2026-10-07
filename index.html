@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>语册 · 微信聊天记录导出工具</title>
+<meta name="description" content="语册（TalkBook）——微信 4.x 聊天记录本地导出工具。本地解密、离线运行、数据不出本机，支持 TXT / JSON / HTML 归档、定时自动导出与语音转文字。"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231B3B36'/%3E%3Cpath d='M6.5 9.5h7.2a2 2 0 0 1 2 2v2.8a2 2 0 0 1-2 2h-3l-2.6 2v-2H6.5a2 2 0 0 1-2-2v-2.8a2 2 0 0 1 2-2z' fill='%23fff'/%3E%3Cpath d='M13.8 10.4v-1.6h4.4a1.4 1.4 0 0 1 1.4 1.4v3.6h-1.8v-3.4h-4z' fill='%238FD3C4'/%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap"/>
+<style>
+:root{
+  --ink:#1B3B36;
+  --ink-deep:#122B28;
+  --accent:#2E7D68;
+  --accent-deep:#21574A;
+  --accent-soft:#E4EFEA;
+  --bg:#FAF7F1;
+  --surface:#FFFFFF;
+  --line:#E6DFD1;
+  --text:#24312E;
+  --muted:#6B7672;
+  --serif:'Noto Serif SC',serif;
+  --sans:'Noto Sans SC','Microsoft YaHei','PingFang SC',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:400;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.eyebrow{font-size:12.5px;letter-spacing:.18em;color:var(--accent-deep);font-weight:600;text-transform:uppercase}
+h1,h2,h3{font-family:var(--serif);color:var(--ink-deep);font-weight:700;line-height:1.25}
+.lead{color:var(--muted);font-size:16px;max-width:46ch}
+
+/* ===== 导航 ===== */
+.nav{position:sticky;top:0;z-index:50;background:rgba(250,247,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand img{width:34px;height:34px;border-radius:8px;display:block}
+.brand b{font-family:var(--serif);font-size:19px;color:var(--ink-deep);font-weight:700}
+.brand small{display:block;font-size:11px;color:var(--muted);font-weight:400;letter-spacing:.04em;margin-top:-3px}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{font-size:14px;color:var(--text);transition:color .2s}
+.nav-links a:hover{color:var(--accent-deep)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:9px;font-family:var(--sans);font-weight:600;font-size:14px;cursor:pointer;border:1px solid transparent;transition:transform .15s,background .2s,box-shadow .2s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(46,125,104,.28)}
+.btn-primary:hover{background:var(--accent-deep)}
+.btn-ghost{border-color:var(--line);color:var(--ink-deep);background:#fff}
+.btn-ghost:hover{border-color:var(--accent)}
+.burger{display:none;background:none;border:none;width:44px;height:44px;cursor:pointer}
+.burger span{display:block;width:22px;height:2px;background:var(--ink-deep);margin:5px auto;border-radius:2px}
+
+/* ===== Hero ===== */
+.hero{padding:88px 0 72px;position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.hero h1{font-size:52px;font-weight:900;letter-spacing:-.01em}
+.hero h1 .hl{color:var(--accent-deep)}
+.hero .sub{margin:22px 0 0;font-size:17px;color:var(--text)}
+.hero .lead{margin-top:8px}
+.hero-cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+.hero-meta{margin-top:22px;display:flex;gap:22px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.hero-meta b{color:var(--ink-deep);font-family:var(--serif);font-size:18px;display:block;line-height:1.2}
+/* hero 视觉：归档卡片 */
+.stage{position:relative;min-height:380px}
+.card{position:absolute;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 40px rgba(18,43,40,.10);padding:14px 16px}
+.card .hd{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:10px}
+.av{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600;flex-shrink:0}
+.bub{max-width:200px;border-radius:9px;padding:7px 10px;font-size:12.5px;margin:5px 0}
+.c1{top:8px;left:0;width:250px}
+.c1 .hd .av{background:#9b5c33}
+.c1 .mine{background:var(--accent);color:#fff;margin-left:auto;text-align:right}
+.c1 .theirs{background:#f1f5f2;color:var(--text)}
+.c2{top:128px;right:6px;width:230px}
+.c2 .hd .av{background:var(--accent)}
+.c2 .theirs{background:#f1f5f2;color:var(--text)}
+.c2 .mine{background:var(--accent);color:#fff;margin-left:auto;text-align:right}
+.c3{bottom:16px;left:52px;width:248px}
+.c3 .hd .av{background:#7a6a9b}
+.c3 .tag{font-family:var(--serif);font-size:13px;color:var(--ink-deep);margin-bottom:8px}
+.c3 .line{height:8px;border-radius:4px;background:var(--accent-soft);margin:6px 0}
+.c3 .line:nth-child(3){width:82%}
+.c3 .line:nth-child(4){width:60%}
+.c3 .file{font-size:11px;color:var(--muted);margin-top:8px}
+
+/* ===== 区块通用 ===== */
+section{padding:72px 0}
+.sec-head{margin-bottom:40px}
+.sec-head h2{font-size:34px;margin:10px 0 12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feature{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;transition:box-shadow .2s,transform .2s}
+.feature:hover{box-shadow:0 12px 30px rgba(18,43,40,.08);transform:translateY(-3px)}
+.feature .ic{width:42px;height:42px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:var(--accent-deep)}
+.feature h3{font-size:18px;margin-bottom:8px}
+.feature p{font-size:14px;color:var(--muted)}
+.feature ul{margin-top:10px;padding-left:0;list-style:none}
+.feature ul li{font-size:13px;color:var(--text);padding:3px 0 3px 16px;position:relative}
+.feature ul li::before{content:"";position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+/* ===== 隐私横幅 ===== */
+.privacy{background:var(--ink-deep);color:#dbe7e2;border-radius:18px;padding:44px 40px;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;position:relative;overflow:hidden}
+.privacy::after{content:"";position:absolute;right:-40px;bottom:-60px;width:220px;height:220px;border-radius:50%;background:rgba(46,125,104,.22)}
+.privacy h2{color:#fff;font-size:26px;margin-bottom:8px}
+.privacy p{font-size:14.5px;color:#c7d6d0;max-width:58ch}
+.privacy .shield{width:120px;height:120px;color:#8fd3c4;flex-shrink:0}
+
+/* ===== 流程时间轴 ===== */
+.steps{margin-top:16px}
+.step{display:grid;grid-template-columns:96px 30px 1fr;gap:0;align-items:center}
+.step+.step{margin-top:34px}
+.step .when{font-family:var(--serif);font-weight:600;color:var(--accent-deep);font-size:15px;text-align:right;padding-right:16px;line-height:1.4}
+.step .axis{display:grid;grid-template-columns:1fr;justify-self:center;height:100%}
+.step .dot{width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 2px var(--accent);justify-self:center;align-self:center;z-index:1}
+.step .rail{width:2px;background:var(--line);justify-self:center;height:34px}
+.step .body h3{font-size:18px;margin-bottom:4px}
+.step .body p{font-size:14px;color:var(--muted);max-width:56ch}
+
+/* ===== 下载 CTA ===== */
+.cta{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:46px 40px;text-align:center}
+.cta h2{font-size:30px}
+.cta .lead{margin:10px auto 0}
+.cta .btnrow{display:flex;gap:14px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+.cta .note{margin-top:18px;font-size:12.5px;color:var(--muted)}
+
+/* ===== Footer ===== */
+footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
+.foot .brand small{display:inline}
+.foot .meta{font-size:12.5px;color:var(--muted);display:flex;gap:18px;flex-wrap:wrap}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(80px);background:var(--ink-deep);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .3s,transform .3s;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.18);pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== 响应式 ===== */
+@media(max-width:900px){
+  .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--bg);flex-direction:column;align-items:flex-start;padding:16px 24px;gap:16px;border-bottom:1px solid var(--line)}
+  .nav-links.open{display:flex}
+  .burger{display:block}
+  .hero{padding:56px 0 48px}
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .hero h1{font-size:38px}
+  .stage{min-height:430px;max-width:480px;margin:0 auto;width:100%}
+  .c1{top:4px;left:0}
+  .c2{top:172px;right:0}
+  .c3{bottom:12px;left:44px}
+  .grid3{grid-template-columns:1fr}
+  .privacy{grid-template-columns:1fr;padding:34px 26px}
+  .privacy .shield{width:90px;height:90px}
+  .step{grid-template-columns:70px 24px 1fr}
+}
+@media(max-width:520px){
+  .hero h1{font-size:30px}
+  .wrap{padding:0 18px}
+  .grid3{gap:14px}
+  .feature{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ===== 导航 ===== -->
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">
+      <img src="assets/logo.png" alt="语册 logo"/>
+      <span><b>语册</b><small>TalkBook · 微信聊天记录导出</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#features">功能</a>
+      <a href="#privacy">隐私</a>
+      <a href="#flow">使用流程</a>
+      <a href="#download">下载</a>
+      <a href="#download" class="btn btn-primary">获取语册</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">微信 4.x 聊天记录 · 本地导出</div>
+      <h1>把聊天记录<br/>安全地<span class="hl">留在本机</span></h1>
+      <p class="sub">语册在本地完成微信 4.x 数据库的解密、解析与归档导出，全程离线，数据不出本机。</p>
+      <p class="lead">支持 TXT / JSON / HTML 三种归档，内置获取密钥，可定时自动导出，还能把语音转成文字。</p>
+      <div class="hero-cta">
+        <a href="#download" class="btn btn-primary">下载 Windows 版</a>
+        <a href="#features" class="btn btn-ghost">了解功能</a>
+      </div>
+      <div class="hero-meta">
+        <span><b>本地</b>解密与解析</span>
+        <span><b>离线</b>可运行</span>
+        <span><b>0</b>联网回传</span>
+      </div>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="card c1">
+        <div class="hd"><span class="av">李</span>李老师 · 单聊</div>
+        <div class="bub theirs">合同扫描件我发你邮箱了</div>
+        <div class="bub mine">收到，这就看</div>
+      </div>
+      <div class="card c2">
+        <div class="hd"><span class="av">群</span>产品讨论组</div>
+        <div class="bub theirs">语音 8秒</div>
+        <div class="bub mine">文字：把配色换成墨青更搭</div>
+      </div>
+      <div class="card c3">
+        <div class="tag">导出归档 · 2026-10</div>
+        <div class="line"></div><div class="line"></div><div class="line"></div>
+        <div class="file">Cc_聊天记录.html · 76 条消息</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 功能 ===== -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">功能</div>
+      <h2>为一个需求而生的完整导出方案</h2>
+      <p class="lead">从取密钥到出归档，语册把「导出微信聊天记录」整条链路做成一个桌面程序。</p>
+    </div>
+    <div class="grid3">
+      <div class="feature">
+        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
+        <h3>本地解密，离线运行</h3>
+        <p>直接解密本地微信 4.x 数据库，不依赖微信在线，断网也能导出。</p>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 9h6M9 13h6"/></svg></div>
+        <h3>三种归档格式</h3>
+        <p>导出 TXT / JSON / HTML 归档，聊天、语音、图片与头像在本地完整还原。</p>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.5H19l-4.6 3.4 1.8 5.6L12 14.2 7.8 17.5l1.8-5.6L5 8.5h5.2z"/></svg></div>
+        <h3>获取密钥已内置</h3>
+        <p>内置 V4 内存扫描与 Hook 注入两种取密钥方式，不必额外安装脚本。</p>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.6 2"/></svg></div>
+        <h3>定时自动导出</h3>
+        <p>为指定联系人或群设置间隔，自动增量导出到目标文件夹，带完整运行日志。</p>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 10a7 7 0 0 1 14 0"/><path d="M5 10h4v6H5zM15 10h4v6h-4z"/><path d="M5 16v3M19 16v3"/></svg></div>
+        <h3>语音转文字</h3>
+        <p>对导出的 HTML 归档调用大模型把语音转成文字并写回，断点续跑不丢进度。</p>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+        <h3>联系人统计</h3>
+        <p>汇总每个会话的消息 / 语音 / 图片数量，支持多选批量导出与本地头像还原。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 隐私 ===== -->
+<section id="privacy">
+  <div class="wrap">
+    <div class="privacy">
+      <div>
+        <h2>数据只属于你，不出本机</h2>
+        <p>语册的解密、解析与导出全部在本地完成，不向任何外部网络发送聊天内容。语音转文字时，仅语音片段会发送到你自行配置的大模型接口，其余记录全程留在本机。</p>
+      </div>
+      <svg class="shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l7 3v5c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 使用流程 ===== -->
+<section id="flow">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">使用流程</div>
+      <h2>四步，拿到归档</h2>
+      <p class="lead">全程本地操作，遇到任何一步都有清晰提示与反馈。</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="when">第 1 步</div>
+        <div class="axis"><span class="rail"></span><span class="dot"></span></div>
+        <div class="body"><h3>获取解密密钥</h3><p>内置 V4 内存扫描或 Hook 注入两种方式，在侧边栏一键触发，密钥自动保存。</p></div>
+      </div>
+      <div class="step">
+        <div class="when">第 2 步</div>
+        <div class="axis"><span class="rail"></span><span class="dot"></span></div>
+        <div class="body"><h3>选择会话</h3><p>浏览联系人或群聊，查看各自消息 / 语音 / 图片统计，多选批量导出。</p></div>
+      </div>
+      <div class="step">
+        <div class="when">第 3 步</div>
+        <div class="axis"><span class="rail"></span><span class="dot"></span></div>
+        <div class="body"><h3>导出归档</h3><p>选择 TXT / JSON / HTML 格式与时间范围，图片、语音、头像在本地一并还原。</p></div>
+      </div>
+      <div class="step">
+        <div class="when">第 4 步</div>
+        <div class="axis"><span class="rail"></span><span class="dot"></span></div>
+        <div class="body"><h3>查看 / 语音转写</h3><p>在浏览器打开 HTML 归档即可回看；需要时对语音调用大模型转成文字并写回。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 下载 ===== -->
+<section id="download">
+  <div class="wrap">
+    <div class="cta">
+      <div class="eyebrow">获取语册</div>
+      <h2>Windows 单文件，开箱即用</h2>
+      <p class="lead">最新 v3.2.0 · 2026-10-06，单个 exe（约 25 MB），运行时配置自动落在程序目录。</p>
+      <div class="btnrow">
+        <a href="#download" class="btn btn-primary" data-dl>下载 TalkBook-导出.exe</a>
+        <a href="#flow" class="btn btn-ghost">先看使用流程</a>
+      </div>
+      <div class="note">桌面窗口 + 浏览器 WebUI 双入口 · 无需联网激活，导出完全本地</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer>
+  <div class="wrap foot">
+    <span class="brand">
+      <img src="assets/logo.png" alt="语册 logo"/>
+      <span><b>语册</b><small> TalkBook · 微信聊天记录导出工具</small></span>
+    </span>
+    <div class="meta">
+      <span>当前版本 v3.2.0</span>
+      <span>微信 4.x 本地导出</span>
+      <span>© 2026 语册</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // 移动端菜单
+  var burger=document.getElementById('burger');
+  var links=document.getElementById('navLinks');
+  if(burger&&links){
+    burger.addEventListener('click',function(){links.classList.toggle('open');});
+    links.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click',function(){links.classList.remove('open');});
+    });
+  }
+  // 下载占位提示（服务器部署后替换为真实下载链接即可）
+  var toast=document.getElementById('toast');
+  var timer=null;
+  function showToast(msg){
+    toast.textContent=msg;
+    toast.classList.add('show');
+    if(timer)clearTimeout(timer);
+    timer=setTimeout(function(){toast.classList.remove('show');},2600);
+  }
+  var dlBtns=document.querySelectorAll('[data-dl]');
+  Array.prototype.forEach.call(dlBtns,function(b){
+    b.addEventListener('click',function(e){e.preventDefault();showToast('安装包将在部署后开放下载，敬请期待');});
+  });
+})();
+</script>
+</body>
+</html>
