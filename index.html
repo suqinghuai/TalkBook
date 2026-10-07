@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>语册 · 微信聊天记录导出工具</title>
-<meta name="description" content="语册（TalkBook）——微信 4.x 聊天记录本地导出工具。本地解密、离线运行、数据不出本机，支持 TXT / JSON / HTML 归档、定时自动导出与语音转文字。"/>
+<meta name="description" content="语册（TalkBook）——微信 4.x 聊天记录导出工具。支持 TXT / JSON / HTML / PDF 多格式导出、语音转文字、数据可视化；解密与数据解析完全本地运行、数据不上传，导出的档案可用于个人纪念、备份与法律取证。"/>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231B3B36'/%3E%3Cpath d='M6.5 9.5h7.2a2 2 0 0 1 2 2v2.8a2 2 0 0 1-2 2h-3l-2.6 2v-2H6.5a2 2 0 0 1-2-2v-2.8a2 2 0 0 1 2-2z' fill='%23fff'/%3E%3Cpath d='M13.8 10.4v-1.6h4.4a1.4 1.4 0 0 1 1.4 1.4v3.6h-1.8v-3.4h-4z' fill='%238FD3C4'/%3E%3C/svg%3E"/>
 <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap"/>
 <style>
@@ -158,8 +158,6 @@ footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
 </head>
 <body>
 
-<div class="toast" id="toast"></div>
-
 <!-- ===== 导航 ===== -->
 <header class="nav">
   <div class="wrap nav-in">
@@ -182,18 +180,18 @@ footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
 <section class="hero" id="top">
   <div class="wrap hero-grid">
     <div>
-      <div class="eyebrow">微信 4.x 聊天记录 · 本地导出</div>
-      <h1>把聊天记录<br/>安全地<span class="hl">留在本机</span></h1>
-      <p class="sub">语册在本地完成微信 4.x 数据库的解密、解析与归档导出，全程离线，数据不出本机。</p>
-      <p class="lead">支持 TXT / JSON / HTML 三种归档，内置获取密钥，可定时自动导出，还能把语音转成文字。</p>
+      <div class="eyebrow">微信 4.x 聊天记录 · 多格式导出</div>
+      <h1>把微信聊天记录<br/>导出成<span class="hl">你的档案</span></h1>
+      <p class="sub">语册把微信 4.x 数据库一键导出为 TXT / JSON / HTML / PDF 多格式，语音能转文字，记录能可视化盘点。</p>
+      <p class="lead">解密与数据解析完全本地运行、数据不上传；导出的档案可用于个人纪念、数据备份，也可作为法律取证材料。</p>
       <div class="hero-cta">
         <a href="#download" class="btn btn-primary">下载 Windows 版</a>
         <a href="#features" class="btn btn-ghost">了解功能</a>
       </div>
       <div class="hero-meta">
-        <span><b>本地</b>解密与解析</span>
-        <span><b>离线</b>可运行</span>
-        <span><b>0</b>联网回传</span>
+        <span><b>多格式</b>txt·json·html·pdf</span>
+        <span><b>语音</b>转文字</span>
+        <span><b>可视化</b>盘点统计</span>
       </div>
     </div>
     <div class="stage" aria-hidden="true">
@@ -221,24 +219,29 @@ footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
   <div class="wrap">
     <div class="sec-head">
       <div class="eyebrow">功能</div>
-      <h2>为一个需求而生的完整导出方案</h2>
-      <p class="lead">从取密钥到出归档，语册把「导出微信聊天记录」整条链路做成一个桌面程序。</p>
+      <h2>一份聊天，多种用途</h2>
+      <p class="lead">多格式导出、语音转文字、数据可视化一应俱全，把微信聊天记录变成可回顾、可备份、可取证的个人档案。</p>
     </div>
     <div class="grid3">
       <div class="feature">
-        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
-        <h3>本地解密，离线运行</h3>
-        <p>直接解密本地微信 4.x 数据库，不依赖微信在线，断网也能导出。</p>
-      </div>
-      <div class="feature">
         <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 9h6M9 13h6"/></svg></div>
-        <h3>三种归档格式</h3>
-        <p>导出 TXT / JSON / HTML 归档，聊天、语音、图片与头像在本地完整还原。</p>
+        <h3>多格式导出</h3>
+        <p>支持 TXT / JSON / HTML 归档，也可导出为 PDF，图片、语音、头像在本地完整还原。</p>
       </div>
       <div class="feature">
-        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l1.8 5.5H19l-4.6 3.4 1.8 5.6L12 14.2 7.8 17.5l1.8-5.6L5 8.5h5.2z"/></svg></div>
-        <h3>获取密钥已内置</h3>
-        <p>内置 V4 内存扫描与 Hook 注入两种取密钥方式，不必额外安装脚本。</p>
+        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 10a7 7 0 0 1 14 0"/><path d="M5 10h4v6H5zM15 10h4v6h-4z"/><path d="M5 16v3M19 16v3"/></svg></div>
+        <h3>语音转文字</h3>
+        <p>对导出的归档调用大模型把语音转成文字并写回，断点续跑不丢进度，回看更省心。</p>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20h16M6 16v-5M12 16V8M18 16v-9"/></svg></div>
+        <h3>数据可视化</h3>
+        <p>把消息量、语音、图片等整理成图表，一眼看清每段关系的沟通节奏与重点。</p>
+      </div>
+      <div class="feature">
+        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
+        <h3>本地解密，数据不上传</h3>
+        <p>解密与解析完全在本地运行、数据不上传，仅在需要时联网验证，聊天内容不出本机。</p>
       </div>
       <div class="feature">
         <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.6 2"/></svg></div>
@@ -246,14 +249,9 @@ footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
         <p>为指定联系人或群设置间隔，自动增量导出到目标文件夹，带完整运行日志。</p>
       </div>
       <div class="feature">
-        <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 10a7 7 0 0 1 14 0"/><path d="M5 10h4v6H5zM15 10h4v6h-4z"/><path d="M5 16v3M19 16v3"/></svg></div>
-        <h3>语音转文字</h3>
-        <p>对导出的 HTML 归档调用大模型把语音转成文字并写回，断点续跑不丢进度。</p>
-      </div>
-      <div class="feature">
         <div class="ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
-        <h3>联系人统计</h3>
-        <p>汇总每个会话的消息 / 语音 / 图片数量，支持多选批量导出与本地头像还原。</p>
+        <h3>导出用于纪念·备份·取证</h3>
+        <p>导出的档案是个人纪念册，也是可靠的数据备份，关键对话更可作为法律取证材料。</p>
       </div>
     </div>
   </div>
@@ -264,8 +262,8 @@ footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
   <div class="wrap">
     <div class="privacy">
       <div>
-        <h2>数据只属于你，不出本机</h2>
-        <p>语册的解密、解析与导出全部在本地完成，不向任何外部网络发送聊天内容。语音转文字时，仅语音片段会发送到你自行配置的大模型接口，其余记录全程留在本机。</p>
+        <h2>解密本地运行，数据不上传</h2>
+        <p>语册的解密与数据解析完全在本地完成，聊天内容不向任何外部网络上传。软件仅在你配置的大模型语音转写、或联网验证时产生网络请求，其余处理全程留在本机。</p>
       </div>
       <svg class="shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l7 3v5c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
@@ -277,8 +275,8 @@ footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
   <div class="wrap">
     <div class="sec-head">
       <div class="eyebrow">使用流程</div>
-      <h2>四步，拿到归档</h2>
-      <p class="lead">全程本地操作，遇到任何一步都有清晰提示与反馈。</p>
+      <h2>四步，拿到你的档案</h2>
+      <p class="lead">从取密钥到导出 PDF / 语音转文字，全程有清晰提示与反馈。</p>
     </div>
     <div class="steps">
       <div class="step">
@@ -289,17 +287,17 @@ footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
       <div class="step">
         <div class="when">第 2 步</div>
         <div class="axis"><span class="rail"></span><span class="dot"></span></div>
-        <div class="body"><h3>选择会话</h3><p>浏览联系人或群聊，查看各自消息 / 语音 / 图片统计，多选批量导出。</p></div>
+        <div class="body"><h3>选择会话</h3><p>浏览联系人或群聊，查看各自消息 / 语音 / 图片统计与可视化盘点，多选批量导出。</p></div>
       </div>
       <div class="step">
         <div class="when">第 3 步</div>
         <div class="axis"><span class="rail"></span><span class="dot"></span></div>
-        <div class="body"><h3>导出归档</h3><p>选择 TXT / JSON / HTML 格式与时间范围，图片、语音、头像在本地一并还原。</p></div>
+        <div class="body"><h3>导出归档 / PDF</h3><p>选择 TXT / JSON / HTML / PDF 格式与时间范围，图片、语音、头像在本地一并还原。</p></div>
       </div>
       <div class="step">
         <div class="when">第 4 步</div>
         <div class="axis"><span class="rail"></span><span class="dot"></span></div>
-        <div class="body"><h3>查看 / 语音转写</h3><p>在浏览器打开 HTML 归档即可回看；需要时对语音调用大模型转成文字并写回。</p></div>
+        <div class="body"><h3>回看 / 语音转写</h3><p>在浏览器打开 HTML 归档即可回看；需要时对语音调用大模型转成文字并写回。</p></div>
       </div>
     </div>
   </div>
@@ -311,12 +309,12 @@ footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
     <div class="cta">
       <div class="eyebrow">获取语册</div>
       <h2>Windows 单文件，开箱即用</h2>
-      <p class="lead">最新 v3.2.0 · 2026-10-06，单个 exe（约 25 MB），运行时配置自动落在程序目录。</p>
+      <p class="lead">单个 exe（约 25 MB），运行时配置自动落在程序目录，黑白风格桌面窗口 + 浏览器 WebUI 双入口。</p>
       <div class="btnrow">
-        <a href="#download" class="btn btn-primary" data-dl>下载 TalkBook-导出.exe</a>
+        <a href="https://pan.baidu.com/s/1VZo19034-nqp0poXmUKKAQ?pwd=talk" target="_blank" rel="noopener" class="btn btn-primary" data-dl>百度网盘下载</a>
         <a href="#flow" class="btn btn-ghost">先看使用流程</a>
       </div>
-      <div class="note">桌面窗口 + 浏览器 WebUI 双入口 · 无需联网激活，导出完全本地</div>
+      <div class="note">提取码 talk · 最新版会持续同步到此下载地址，直接打开复制链接到网盘即可</div>
     </div>
   </div>
 </section>
@@ -329,8 +327,8 @@ footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
       <span><b>语册</b><small> TalkBook · 微信聊天记录导出工具</small></span>
     </span>
     <div class="meta">
-      <span>当前版本 v3.2.0</span>
-      <span>微信 4.x 本地导出</span>
+      <span>微信 4.x · 多格式导出</span>
+      <span>语音转文字 · 数据可视化</span>
       <span>© 2026 语册</span>
     </div>
   </div>
@@ -347,19 +345,6 @@ footer{border-top:1px solid var(--line);padding:40px 0 48px;margin-top:24px}
       a.addEventListener('click',function(){links.classList.remove('open');});
     });
   }
-  // 下载占位提示（服务器部署后替换为真实下载链接即可）
-  var toast=document.getElementById('toast');
-  var timer=null;
-  function showToast(msg){
-    toast.textContent=msg;
-    toast.classList.add('show');
-    if(timer)clearTimeout(timer);
-    timer=setTimeout(function(){toast.classList.remove('show');},2600);
-  }
-  var dlBtns=document.querySelectorAll('[data-dl]');
-  Array.prototype.forEach.call(dlBtns,function(b){
-    b.addEventListener('click',function(e){e.preventDefault();showToast('安装包将在部署后开放下载，敬请期待');});
-  });
 })();
 </script>
 </body>
